@@ -65,12 +65,34 @@ void imprimirTablaQuejas(TablaQuejas tabla)
 
 bool perteneceQuejaTablaQuejas(TablaQuejas tabla, TFecha fecha)
 {
+  int index = funcionHash(fecha, tabla->cota);
+  rep_nodoQueja *queja = tabla->quejas[index];
+  while (queja != nullptr)
+  {
+    if (compararTFechas(fecha, fechaTQueja(queja->queja)) == 0)
+    {
+      return true;
+    }
+    queja = queja->sig;
+  }
+
   return false;
 }
 
 TQueja obtenerQuejaTablaQuejas(TablaQuejas tabla, TFecha fecha)
 {
-  return NULL;
+  int index = funcionHash(fecha, tabla->cota);
+  rep_nodoQueja *queja = tabla->quejas[index];
+  while (queja != nullptr)
+  {
+    if (compararTFechas(fecha, fechaTQueja(queja->queja)) == 0)
+    {
+      return queja->queja;
+    }
+    queja = queja->sig;
+  }
+
+  return nullptr;
 }
 
 void liberarTablaQuejas(TablaQuejas &tabla)
@@ -81,7 +103,7 @@ void liberarTablaQuejas(TablaQuejas &tabla)
 
     while (quejas != nullptr)
     {
-      rep_nodoQueja* aux = quejas;
+      rep_nodoQueja *aux = quejas;
       quejas = quejas->sig;
       liberarTQueja(aux->queja);
       delete aux;
@@ -89,5 +111,5 @@ void liberarTablaQuejas(TablaQuejas &tabla)
   }
   delete[] tabla->quejas;
   delete tabla;
-  tabla=nullptr;
+  tabla = nullptr;
 }
