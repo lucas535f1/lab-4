@@ -15,7 +15,7 @@ TColaEnvios crearTColaEnvios(int N)
     nuevo->cantidad = 0;
     nuevo->cota = N;
     nuevo->cola = new rep_envio *[N + 1];
-    nuevo->prioridad = -1;
+    nuevo->prioridad = 1;
     for (int i = 0; i <= N; i++)
     {
         nuevo->cola[i] = nullptr;
@@ -25,7 +25,7 @@ TColaEnvios crearTColaEnvios(int N)
 
 void filtradoAscendente(TColaEnvios &colaEnvios, int nodo)
 {
-    while (nodo > 1 && compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo / 2])) == 1)
+    while (nodo > 1 && compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo / 2])) == 1*colaEnvios->prioridad)
     {
         TEnvio aux = colaEnvios->cola[nodo / 2];
         colaEnvios->cola[nodo / 2] = colaEnvios->cola[nodo];
@@ -35,12 +35,12 @@ void filtradoAscendente(TColaEnvios &colaEnvios, int nodo)
 }
 void filtradoDescendente(TColaEnvios &colaEnvios, int nodo)
 {
-    while (nodo * 2 <= colaEnvios->cantidad && (compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2])) == -1 ||
-          (nodo * 2 + 1 <= colaEnvios->cantidad && compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2 + 1])) == -1)))
+    while (nodo * 2 <= colaEnvios->cantidad && (compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2])) == -1*colaEnvios->prioridad ||
+                                                (nodo * 2 + 1 <= colaEnvios->cantidad && compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2 + 1])) == -1*colaEnvios->prioridad)))
     {
         // si el nodo es menos prioritario que alguno de los hijos
         //   si si   comparar con el hijo MAS prioritario
-        if (compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo * 2]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2 + 1])) == 1)
+        if (compararTFechas(obtenerFechaTEnvio(colaEnvios->cola[nodo * 2]), obtenerFechaTEnvio(colaEnvios->cola[nodo * 2 + 1])) == 1*colaEnvios->prioridad)
         {
             TEnvio aux = colaEnvios->cola[nodo * 2];
             colaEnvios->cola[nodo * 2] = colaEnvios->cola[nodo];
@@ -61,9 +61,9 @@ void encolarEnvioTColaEnvios(TColaEnvios &colaEnvios, TEnvio envio)
 {
     colaEnvios->cantidad++;
     colaEnvios->cola[colaEnvios->cantidad] = envio;
-    //printf("Encolar antes filtrar\n");
+    // printf("Encolar antes filtrar\n");
     filtradoAscendente(colaEnvios, colaEnvios->cantidad);
-    //printf("Encolar despues filtrar\n");
+    // printf("Encolar despues filtrar\n");
 }
 
 int cantidadTColaEnvios(TColaEnvios colaEnvios)
@@ -100,9 +100,9 @@ TEnvio desencolarTColaEnvios(TColaEnvios &colaEnvios)
     colaEnvios->cola[1] = colaEnvios->cola[colaEnvios->cantidad];
     colaEnvios->cola[colaEnvios->cantidad] = nullptr;
     colaEnvios->cantidad--;
-    //printf("Desencolar  filtrar\n");
+    // printf("Desencolar  filtrar\n");
     filtradoDescendente(colaEnvios, 1);
-    //printf("Desencolar despues filtrar\n");
+    // printf("Desencolar despues filtrar\n");
     return retornar;
 }
 
@@ -122,8 +122,13 @@ void liberarTColaEnvios(TColaEnvios &colaEnvios)
 
 void invertirPrioridadTColaEnvios(TColaEnvios &colaEnvio)
 {
+    colaEnvio->prioridad*=-1;
 }
 
-TEnvio masPrioritarioTColaEnvios(TColaEnvios colaEnvio) { return NULL; }
+TEnvio masPrioritarioTColaEnvios(TColaEnvios colaEnvio)
+{
+    return colaEnvio->cola[1];
+}
 
-int maxTColaEnvios(TColaEnvios colaEnvio) { return 0; }
+int maxTColaEnvios(TColaEnvios colaEnvio)
+ { return colaEnvio->cota; }
