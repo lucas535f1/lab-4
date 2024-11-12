@@ -127,7 +127,7 @@ void invertirPrioridadTColaEnvios(TColaEnvios &colaEnvio)
 {
     colaEnvio->prioridad *= -1;
 
-    for (int i = 1; i <= colaEnvio->cantidad / 2+1; i++)
+    for (int i = colaEnvio->cantidad/2; i>0; i--)
     {
         for (int y = 0; y < 10; y++)
         {
